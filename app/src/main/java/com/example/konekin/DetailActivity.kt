@@ -3,12 +3,8 @@ package com.example.konekin
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.konekin.databinding.ActivityDetailBinding
-import com.example.konekin.databinding.ActivityMainBinding
 import com.example.konekin.model.UserDetail
 import com.example.konekin.network.ApiClient
 import retrofit2.Call
@@ -18,6 +14,13 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class DetailActivity : AppCompatActivity() {
+
+    companion object {
+        const val EXTRA_ID = "extra_id"
+        const val EXTRA_NAME = "extra_name"
+        const val EXTRA_AGE = "extra_age"
+        const val EXTRA_SALARY = "extra_salary"
+    }
 
     private lateinit var binding: ActivityDetailBinding
 
@@ -34,6 +37,16 @@ class DetailActivity : AppCompatActivity() {
             finish()
             return
         }
+
+        val name = intent.getStringExtra(EXTRA_NAME) ?: "-"
+        val age = intent.getIntExtra(EXTRA_AGE, 0)
+        val salary = NumberFormat.getNumberInstance(Locale.US)
+            .format(intent.getIntExtra(EXTRA_SALARY, 0))
+
+        binding.tvName.text = name
+        binding.tvId.text = "ID: $id"
+        binding.tvAge.text = "Umur: $age tahun"
+        binding.tvSalary.text = "Gaji: $salary"
 
         binding.progressBar.visibility = View.VISIBLE
 
@@ -54,12 +67,6 @@ class DetailActivity : AppCompatActivity() {
                     binding.tvId.text = "ID: ${employee.id}"
                     binding.tvAge.text = "Umur: ${employee.employeeAge} tahun"
                     binding.tvSalary.text = "Gaji: $salary"
-                } else {
-                    Toast.makeText(
-                        this@DetailActivity,
-                        "Gagal memuat detail (kode ${response.code()})",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             }
 
@@ -70,7 +77,5 @@ class DetailActivity : AppCompatActivity() {
         })
     }
 
-    companion object {
-        const val EXTRA_ID = "extra_id"
-    }
+
 }

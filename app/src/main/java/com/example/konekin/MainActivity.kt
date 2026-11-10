@@ -30,8 +30,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.lvNama.setOnItemClickListener { _, _, position, _ ->
             val selected = employeeList[position]
-            val intent = Intent(this, DetailActivity::class.java)
-            intent.putExtra(DetailActivity.EXTRA_ID, selected.id)
+            val intent = Intent(this, DetailActivity::class.java).apply {
+                putExtra(DetailActivity.EXTRA_ID, selected.id)
+                putExtra(DetailActivity.EXTRA_NAME, selected.employeeName)
+                putExtra(DetailActivity.EXTRA_AGE, selected.employeeAge)
+                putExtra(DetailActivity.EXTRA_SALARY, selected.employeeSalary)
+            }
             startActivity(intent)
         }
         binding.progressBar.visibility = View.VISIBLE
@@ -46,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
                 val body = response.body()
                 if (response.isSuccessful && body != null) {
-                    employeeList.addAll(body.data) // [MODIFIKASI 1]
+                    employeeList.addAll(body.data)
                     for (i in body.data) {
                         userList.add(i.employeeName)
                     }
@@ -68,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<Users>, t: Throwable) {
+                binding.progressBar.visibility = View.GONE
                 Toast.makeText(this@MainActivity, "Koneksi error",
                     Toast.LENGTH_LONG).show()
             }
